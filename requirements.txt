@@ -1,0 +1,5 @@
+certifi
+ipython
+pandas
+requests
+urllib3
