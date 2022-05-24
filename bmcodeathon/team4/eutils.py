@@ -74,11 +74,13 @@ class EUtils(object):
     """
     An abstraction that wraps the NCBI E-Utilities
     """
-    def __init__(self, apikey=None, email=None, rate=3, prefix=None, session=None):
+    def __init__(self, apikey=None, email=None, rate=3, prefix=None, session=None, usehistory=False):
         self.apikey = apikey
         self.email = email
         self.rate = rate
         self.prefix = prefix if prefix else EUTILS_PREFIX
+        self.usehistory = usehistory
+        self.webenv = None
         if not session:
             session = RateLimitedSession(rate=rate, tokens=rate, capacity=rate)
             session.mount('https://', HTTPAdapter(max_retries=3, pool_maxsize=10))
@@ -98,8 +100,11 @@ class EUtils(object):
         r.xml = MethodType(extract_xml, r)
         return r
 
-
     def esearch(self, db, **kwargs):
+        if self.usehistory:
+            kwargs['usehistory'] = 'y'
+            if self.webenv:
+                kwargs['WebEnv'] = self.webenv
         url = EUTILS_URL.format(self.prefix, 'esearch.fcgi') + '?' + self.params(db, **kwargs)
         r = self.session.get(url)
         r.xml = MethodType(extract_xml, r)
@@ -113,6 +118,22 @@ class EUtils(object):
             params = self.params(db, **kwargs)
         url = EUTILS_URL.format(self.prefix, 'efetch.fcgi') + '?' + params
         r = self.session.get(url)
+        r.xml = MethodType(extract_xml, r)
+        if kwargs.get('rettype', '') == 'medline':
+            r.medline = MethodType(extract_medline, r)
+        return r
+
+    def elink(self, dbfrom=None, db=None, **kwargs):
+        url = EUTILS_URL.format(self.prefix, 'elink.fcgi') + '?' + params
+        r = self.session.get()
+        r.xml = MethodType(extract_xml, r)
+        if kwargs.get('rettype', '') == 'medline':
+            r.medline = MethodType(extract_medline, r)
+        return r
+
+    def esummary(self, db, **kwargs):
+        url = EUTILS_URL.format(self.prefix, 'esummary.fcgi') + '?' + params
+        r = self.session.get()
         r.xml = MethodType(extract_xml, r)
         if kwargs.get('rettype', '') == 'medline':
             r.medline = MethodType(extract_medline, r)
