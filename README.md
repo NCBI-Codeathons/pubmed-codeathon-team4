@@ -19,9 +19,13 @@ If you are using a Jupyter nodebook, you can run a bash command using an exclama
 This code manages the Acceptable Usage Limits and makes our search client go as slow as needed.
 It will sleep for microseconds if it is out of "tokens" to do an API operation.
 
-This code also manages the search for you so you can concentrate on more interesting things.
+I like that the response doesn't hide that the response is XML - you can use XPath naturally
+rather than using Python specific constructions.
 
-## How?
+It also is growing to integrate with the history server, but this needs to be better
+described.
+
+## How to instantiate
 
 I have no idea how this compares to Biopython, but it works with the E-Utilities test server.
 You can import it as follows:
@@ -40,24 +44,26 @@ Then, you create an instance of EUtils using the following arguments:
 For instance:
 
 ```python
-eutils = EUtils(my_api_key, 'dansmood@gmail.com', 10, 'https://eutilspreview.ncbi.nlm.nih.gov/entrez')
+eutils = EUtils(my_api_key, my_email, 10, 'https://eutilspreview.ncbi.nlm.nih.gov/entrez')
 ```
 
-The E-Utilities object has methods `einfo`, `esearch`, and `efetch` that return a requests response object.
-The response object is decorated with a `xml` method that parses the response as XML.
+The E-Utilities object has methods `einfo`, `esearch`, `efetch`, and `epost` that return a requests response object.
+The response object is decorated with a `xml` attribute that holds the response as XML.  This has been changed
+to only use XML to integrate with the history server
+
+## Basic Usage
 
 For example:
 
 ```python
-r = utils.esearch('pubmed', term='African Americans')
-doc = r.xml()
-print_element(doc)
+r = eutils.esearch('pubmed', term='African Americans', retmax=200)
+print_element(r.xml)
 ```
 
-Since the `doc` above is an XML element, you can use XPath on it:
+Since the `r.xml` above is an XML element, you can use XPath on it:
 
 ```python
-pmids = [element.text for element in doc.xpath('//IdList/Id')]
+pmids = [element.text for element in r.xml.xpath('//IdList/Id')]
 print(pmids)
 ```
 
@@ -68,4 +74,30 @@ r = eutils.efetch('pubmed', *pmids)
 doc = r.xml()
 returned_pmids = [element.text for element in doc.xpath('//PubmedArticle/MedlineCitation/PMID')]
 returned_pmids == pmids
+```
+
+## With the History Server
+
+See [E-Utilities and the History Server](https://dataguide.nlm.nih.gov/eutilities/history.html) for what
+we are trying to do.  Do a search with history:
+
+```python
+r = eutils.esearch('pubmed', term='African Americans', sort='relevance', retmax=200)
+print(r.webenv)
+print(r.query_key)
+```
+
+Post those 200 results as a new saved result set:
+
+```python
+pmids = [element.text for element in r.xml.xpath('//IdList/Id')]
+r2 = eutils.post('pubmed', *pmids, webenv=r.webenv)
+print_element(r2.xml)
+```
+
+Compose the existing search with a new search:
+
+```python
+r3 = eutils.esearch('pubmed', term='Hedge query', webenv=r2.webenv, query_key=r2.query_key, retmax=200)
+print_element(r3.xml)
 ```
