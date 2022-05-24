@@ -1,4 +1,5 @@
 certifi
+lxml
 ipython
 pandas
 requests
