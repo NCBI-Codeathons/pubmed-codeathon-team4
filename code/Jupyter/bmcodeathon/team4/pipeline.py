@@ -1,38 +1,30 @@
 import sys
+from datetime import datetime
+from pathlib import Path
 from typing import Optional
 
-
 import pandas as pd
+from attrs import define, field
 from numpy.random import RandomState
+from progress.bar import Bar
 from yaml import safe_load
 
 from .eutils import EUtils
 
 PREVIEW_PREFIX = 'https://eutilspreview.ncbi.nlm.nih.gov/entrez'
 
-
+@define
 class Config:
-    def __init__(self,
-                 api_key: str,
-                 email: str,
-                 rate_limit: int,
-                 num_queries: int,
-                 num_results: int,
-                 data_path: str,
-                 data_sep: str,
-                 result_path: str,
-                 hedge_path: str,
-                 seed: int):
-        self.api_key = api_key
-        self.email = email
-        self.rate_limit = rate_limit
-        self.num_queries = num_queries
-        self.num_results = num_results
-        self.data_path = data_path
-        self.data_sep = data_sep
-        self.result_path = result_path
-        self.hedge_path = hedge_path
-        self.seed = seed
+    api_key: Optional[str]
+    email: Optional[str]
+    rate_limit: int
+    num_queries: int
+    num_results: int
+    data_path: str
+    data_sep: str
+    result_path: str
+    hedge_path: str
+    seed: int
 
     @property
     def random_state(self):
@@ -48,16 +40,10 @@ class Config:
             'data_sep': '\t',
             'result_path': '/data/team4/results',
             'hedge_path': '/data/team4/hedges.csv',
-            # TODO: replace these with None, and make it work
-            'api_key': '8d4c4f67f2a663e9d0ef6ed4d60a4eedd609',
-            'email': 'dansmood@gmail.com',
-            'rate_limit': 10
+            'api_key': None,
+            'email': None,
+            'rate_limit': 3
         }
-
-    @staticmethod
-    def get_required_keys():
-        # TODO: implement a list of required settings that won't be in defaults, like api_key and email
-        return set()
 
     @classmethod
     def load(cls, path=None):
@@ -71,16 +57,6 @@ class Config:
             cls_kwargs.update(overrides)
         return cls(**cls_kwargs)
 
-    @staticmethod
-    def get_path():
-        return None
-        ## The code below is too much for right now - hard code and make the user override
-        # if sys.platform == 'win32':
-        #     path = os.path.join(os.environ['APPDATA'], 'team4.yaml')
-        # else:
-        #     path = os.path.join(os.environ['HOME'], '.team4.yaml')
-        # return path
-
 
 class Pipeline:
     def __init__(self, config : Config):
@@ -89,24 +65,59 @@ class Pipeline:
         self.data = None
         self.eutils = EUtils(config.api_key, config.email, config.rate_limit, PREVIEW_PREFIX)
 
-    def load_hedges(self, hedge_path : Optional[str] = None):
+    def load_hedges(self, hedge_path: Optional[str] = None):
         if hedge_path is None:
             hedge_path = self.config.hedge_path
         # TODO: validate expected columns and types?
-        return pd.read_csv(hedge_path)
+        return pd.read_csv(hedge_path, index_col='BiasDimension')
 
-    def load_data(self, data_path : Optional[str] = None):
+    def load_data(self, data_path: Optional[str] = None):
         if data_path is None:
             data_path = self.config.data_path
-        df = pd.read_csv(data_path, sep=self.data_sep)
-        # TODO: remove rows without query
+        df = pd.read_csv(data_path, sep=self.config.data_sep)
+        # remove rows without query
+        df = df[df.query_term.notnull()]
         return df
 
-    def run(self):
+    def stage1(self, result_path=None):
+        # prepare the run
         self.hedge = self.load_hedges()
-        data = self.load_data()
+        self.data = self.load_data()
 
         num_queries = self.config.num_queries
-        self.data = data = data.resample(num_queries, random_state=self.config.random_state)
-        print('Not yet implemented', file=sys.stderr)
-        return 1
+        queries = self.data.sample(num_queries, random_state=self.config.random_state)
+        # drop some of the columns to make this tractable
+        columns_to_drop = list(set(queries.columns) - {'search_id', 'query_term', 'result_count'})
+        queries = queries.drop(columns=columns_to_drop)
+
+        # setup the result directory
+        if result_path is None:
+            result_path = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
+        result_path = Path(self.config.result_path) / result_path
+        result_path.mkdir()
+
+        # progress bar
+        progress = Bar('Sage 1', max=self.config.num_queries)
+
+        # for each query
+        eutils = self.eutils
+        for index, row in self.queries.iterrows():
+            query_term = row['query_term']
+
+            # that query gets a directory
+            query_result_path = result_path / str(index)
+            query_result_path.mkdir()
+            relevance_results = query_result_path / 'relevance.xml'
+            datedesc_results = query_result_path / 'datedesc.xml'
+
+            # save the query results with relevance
+            r = eutils.esearch('pumed', retmax=self.config.num_results, term=query_term, sort='relevance')
+            relevance_results.write_text(r.content)
+
+            # save the query results with date descending
+            r = eutils.esearch('pubmed', retmax=self.config.num_results, term=query_term, sort='date_desc')
+            datedesc_results.write_text(r.content)
+
+            progress.next()
+        progress.finish()
+        return 0
