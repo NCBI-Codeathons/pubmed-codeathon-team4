@@ -1,10 +1,12 @@
+import csv
 import sys
+import time
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
 import pandas as pd
-from attrs import define, field
+from attrs import define
 from numpy.random import RandomState
 from progress.bar import Bar
 from yaml import safe_load
@@ -79,7 +81,7 @@ class Pipeline:
         df = df[df.query_term.notnull()]
         return df
 
-    def stage1(self, result_path=None):
+    def run(self, result_path=None):
         # prepare the run
         self.hedge = self.load_hedges()
         self.data = self.load_data()
@@ -88,36 +90,102 @@ class Pipeline:
         queries = self.data.sample(num_queries, random_state=self.config.random_state)
         # drop some of the columns to make this tractable
         columns_to_drop = list(set(queries.columns) - {'search_id', 'query_term', 'result_count'})
-        queries = queries.drop(columns=columns_to_drop)
+        self.queries = queries = queries.drop(columns=columns_to_drop)
 
         # setup the result directory
         if result_path is None:
             result_path = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
         result_path = Path(self.config.result_path) / result_path
         result_path.mkdir()
+        sample_path = result_path / 'sample_queries.csv'
+        queries.to_csv(sample_path, index=False)
+
+        # start the result file
+        output_path = result_path / 'results.csv'
+        f = open(output_path, 'w')
+        writer = csv.writer(f, dialect='unix')
+        writer.writerow([
+            'search_id',
+            'sort',
+            'result_count',
+            'return_count',
+            'bias_dimension',
+            'bias_result_count',
+        ])
 
         # progress bar
-        progress = Bar('Sage 1', max=self.config.num_queries)
+        progress = Bar('Queries: ', max=self.config.num_queries)
+        stime = time.perf_counter()
 
         # for each query
         eutils = self.eutils
-        for index, row in self.queries.iterrows():
+        for _, row in self.queries.iterrows():
+            search_id = row['search_id']
             query_term = row['query_term']
 
             # that query gets a directory
-            query_result_path = result_path / str(index)
+            query_result_path = result_path / search_id
             query_result_path.mkdir()
             relevance_results = query_result_path / 'relevance.xml'
             datedesc_results = query_result_path / 'datedesc.xml'
 
-            # save the query results with relevance
-            r = eutils.esearch('pumed', retmax=self.config.num_results, term=query_term, sort='relevance')
-            relevance_results.write_text(r.content)
+            # get the query results with relevance
+            r = eutils.esearch('pubmed', retmax=self.config.num_results, term=query_term, sort='relevance')
+            relevance_results.write_bytes(r.content)
+            pmids = [element.text for element in r.xml.xpath('//IdList/Id')]
+            result_count = int(r.xml.xpath('//Count')[0].text)
+            return_count = len(pmids)
+
+            # post to history server
+            r = eutils.epost('pubmed', *pmids)
+            webenv = r.webenv
+            query_key = r.query_key
+
+            # for each hedge, run the query against that query_id
+            for hedge_name, hedge_row in self.hedge.iterrows():
+                hedge_query = hedge_row['SearchStrategy']
+                r = eutils.esearch('pubmed', term=hedge_query, webenv=webenv, query_key=query_key, retmax=200)
+                bias_result_count = len(r.xml.xpath('//IdList/Id'))
+                writer.writerow([
+                    search_id,
+                    'relevance',
+                    result_count,
+                    return_count,
+                    hedge_name,
+                    bias_result_count,
+                ])
 
             # save the query results with date descending
             r = eutils.esearch('pubmed', retmax=self.config.num_results, term=query_term, sort='date_desc')
-            datedesc_results.write_text(r.content)
+            datedesc_results.write_bytes(r.content)
+            pmids = [element.text for element in r.xml.xpath('//IdList/Id')]
+            result_count = int(r.xml.xpath('//Count')[0].text)
+            return_count = len(pmids)
+
+            # post to history server
+            r = eutils.epost('pubmed', *pmids)
+            webenv = r.webenv
+            query_key = r.query_key
+
+            # for each hedge, run the query against that query_id
+            for hedge_name, hedge_row in self.hedge.iterrows():
+                hedge_query = hedge_row['SearchStrategy']
+                r = eutils.esearch('pubmed', term=hedge_query, webenv=webenv, query_key=query_key, retmax=200)
+                bias_result_count = len(r.xml.xpath('//IdList/Id'))
+                writer.writerow([
+                    search_id,
+                    'relevance',
+                    result_count,
+                    return_count,
+                    hedge_name,
+                    bias_result_count,
+                ])
 
             progress.next()
         progress.finish()
+        f.close()
+        elapsed = time.perf_counter() - stime
+        tput = eutils.call_count / elapsed
+        print(f'{eutils.call_count} API Calls in {elapsed:.2f} seconds ({tput:.1f} per second)')
+
         return 0
