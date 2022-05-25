@@ -2,5 +2,7 @@ certifi
 lxml
 ipython
 pandas
+pytest      # no coverage, no reports, but i have to know it works somehow
 requests
 urllib3
+pyaml
