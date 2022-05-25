@@ -120,7 +120,7 @@ class Pipeline:
         # for each query
         eutils = self.eutils
         for _, row in self.queries.iterrows():
-            search_id = row['']
+            search_id = row['search_id']
             query_term = row['query_term']
 
             # that query gets a directory
@@ -133,7 +133,7 @@ class Pipeline:
             r = eutils.esearch('pubmed', retmax=self.config.num_results, term=query_term, sort='relevance')
             relevance_results.write_bytes(r.content)
             pmids = [element.text for element in r.xml.xpath('//IdList/Id')]
-            result_count = int(r.xml.xpath('//Count')[0])
+            result_count = int(r.xml.xpath('//Count')[0].text)
             return_count = len(pmids)
 
             # post to history server
@@ -159,7 +159,7 @@ class Pipeline:
             r = eutils.esearch('pubmed', retmax=self.config.num_results, term=query_term, sort='date_desc')
             datedesc_results.write_bytes(r.content)
             pmids = [element.text for element in r.xml.xpath('//IdList/Id')]
-            result_count = int(r.xml.xpath('//Count')[0])
+            result_count = int(r.xml.xpath('//Count')[0].text)
             return_count = len(pmids)
 
             # post to history server
