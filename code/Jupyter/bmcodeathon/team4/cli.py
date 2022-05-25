@@ -25,8 +25,9 @@ def main(args=None):
     parser = create_parser(args[0])
     opts = parser.parse_args(args[1:])
     config = Config.load(opts.config)
-    pipeline = Pipeline(config)
-    rc = pipeline.run(opts.experiment)
+    pipeline = Pipeline(config, opts.experiment)
+    pipeline.setup()
+    rc = pipeline.run()
     if rc:
         raise SystemExit(int(rc))
 
