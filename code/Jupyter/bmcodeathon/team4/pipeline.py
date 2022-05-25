@@ -28,6 +28,7 @@ class Config:
     result_path: str
     hedge_path: str
     seed: int
+    max_workers: int
 
     @property
     def random_state(self):
@@ -45,7 +46,8 @@ class Config:
             'hedge_path': '/data/team4/hedges.csv',
             'api_key': None,
             'email': None,
-            'rate_limit': 3
+            'rate_limit': 3,
+            'max_workers': 1
         }
 
     @classmethod
@@ -83,7 +85,7 @@ class Pipeline:
         if hedge_path is None:
             hedge_path = self.config.hedge_path
         # TODO: validate expected columns and types?
-        return pd.read_csv(hedge_path, index_col='BiasDimension')
+        return pd.read_csv(hedge_path, index_col='Shortcode')
 
     def load_data(self, data_path: Optional[str] = None):
         if data_path is None:
@@ -106,6 +108,8 @@ class Pipeline:
 
         # setup the result directoryh
         self.result_path.mkdir()
+        queries_path = self.result_path / 'queries.csv'
+        queries.to_csv(queries_path)
 
     # input to the thread pool jobs
     #  - the search_index and sort they are running
@@ -124,7 +128,7 @@ class Pipeline:
 
         # that query gets a directory
         query_result_path = self.result_path / str(search_index)
-        query_result_path.mkdir()
+        query_result_path.mkdir(exist_ok=True)
         xml_results = query_result_path / f'{sort_order}.xml'
 
         # get the query results with relevance
@@ -139,7 +143,7 @@ class Pipeline:
         bias_counts = []
         # for each hedge, run the query against that query_id
         for hedge_name, hedge_row in self.hedge.iterrows():
-            hedge_query = hedge_row['SearchStrategy']
+            hedge_query = hedge_row['Hedge_text']
             full_query = f'{pmid_term} AND ({hedge_query})'
             r = self.eutils.esearch('pubmed', term=full_query, retmax=200)
             bias_result_count = len(r.xml.xpath('//IdList/Id'))
@@ -162,12 +166,11 @@ class Pipeline:
         ])
 
         # progress bar
-        progress = Bar('Queries: ', max=self.config.num_queries)
+        progress = Bar('Runing', max=2*self.config.num_queries)
         stime = time.perf_counter()
 
         # for each query
-        eutils = self.eutils
-        with ThreadPoolExecutor(max_workers=5) as pool:
+        with ThreadPoolExecutor(max_workers=self.config.max_workers) as pool:
             future_to_params = {
                 pool.submit(self.run_case, search_index, sort_order): (search_index, sort_order)
                 for search_index in self.queries.index
@@ -192,7 +195,9 @@ class Pipeline:
         progress.finish()
         f.close()
         elapsed = time.perf_counter() - stime
-        tput = eutils.call_count / elapsed
-        print(f'{eutils.call_count} API Calls in {elapsed:.2f} seconds ({tput:.1f} per second)')
+        call_count = self.eutils.call_count
+        tput = call_count / elapsed
+        print(f'{call_count} API Calls in {elapsed:.2f} seconds ({tput:.1f} per second)')
+        print(f'Results in {output_path}')
 
         return 0

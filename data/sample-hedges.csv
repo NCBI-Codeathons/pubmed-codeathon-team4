@@ -1,4 +1,4 @@
-BiasDimension,Description,TeamMembers,SearchStrategy
+Shortcode,Hedge_Name,TeamMembers,Hedge_text
 Racial,Racial/Ethnic Minorities,Erica,Racial OR Ethnic OR Minorities
 Geographic,Geographic bias (US vs Non-US),"Joanne, Cheryl, Dorothy",Geographic Bias
 Women,Women/Sex,Cheryl,Women OR (Women AND Sex)
