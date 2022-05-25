@@ -48,6 +48,7 @@ class Config:
             'data_sep': '\t',
             'result_path': '/data/team4/results',
             'hedge_path': '/data/team4/hedges.csv',
+            # TODO: replace these with None, and make it work
             'api_key': '8d4c4f67f2a663e9d0ef6ed4d60a4eedd609',
             'email': 'dansmood@gmail.com',
             'rate_limit': 10
