@@ -128,7 +128,8 @@ class Pipeline:
         xml_results = query_result_path / f'{sort_order}.xml'
 
         # get the query results with relevance
-        r = self.eutils.esearch('pubmed', retmax=self.config.num_results, term=query_term, sort=sort_order)
+        only_medline = f'({query_term}) AND medline[sb]'
+        r = self.eutils.esearch('pubmed', retmax=self.config.num_results, term=only_medline, sort=sort_order)
         xml_results.write_bytes(r.content)
         pmids = [element.text for element in r.xml.xpath('//IdList/Id')]
         pmid_term = ','.join(pmids) + '[UID]'
