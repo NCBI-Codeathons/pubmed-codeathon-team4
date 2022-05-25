@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE eSearchResult PUBLIC "-//NLM//DTD esearch 20060628//EN" "https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd">
+<eSearchResult><Count>5</Count><RetMax>5</RetMax><RetStart>0</RetStart><IdList>
+<Id>29193869</Id>
+<Id>27117709</Id>
+<Id>26977013</Id>
+<Id>15989758</Id>
+<Id>11435694</Id>
+</IdList><TranslationSet><Translation>     <From>variant</From>     <To>"variant"[All Fields] OR "variant's"[All Fields] OR "variants"[All Fields]</To>    </Translation></TranslationSet><QueryTranslation>"ppil3"[All Fields] AND ("variant"[All Fields] OR "variant s"[All Fields] OR "variants"[All Fields])</QueryTranslation></eSearchResult>

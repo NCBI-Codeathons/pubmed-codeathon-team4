@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE eSearchResult PUBLIC "-//NLM//DTD esearch 20060628//EN" "https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd">
+<eSearchResult><Count>32</Count><RetMax>32</RetMax><RetStart>0</RetStart><IdList>
+<Id>26219641</Id>
+<Id>24120681</Id>
+<Id>32555677</Id>
+<Id>34023723</Id>
+<Id>32841293</Id>
+<Id>33563832</Id>
+<Id>29561780</Id>
+<Id>33157229</Id>
+<Id>29321325</Id>
+<Id>34452330</Id>
+<Id>23100537</Id>
+<Id>29772674</Id>
+<Id>32171258</Id>
+<Id>35294495</Id>
+<Id>25833042</Id>
+<Id>28617844</Id>
+<Id>23365449</Id>
+<Id>28662211</Id>
+<Id>24006438</Id>
+<Id>23601784</Id>
+<Id>22484152</Id>
+<Id>22258238</Id>
+<Id>21248049</Id>
+<Id>17561226</Id>
+<Id>17900652</Id>
+<Id>16979682</Id>
+<Id>19763182</Id>
+<Id>16297426</Id>
+<Id>15795249</Id>
+<Id>17644816</Id>
+<Id>17530996</Id>
+<Id>23303707</Id>
+</IdList><TranslationSet><Translation>     <From>hardy rw</From>     <To>hardy rw[Author]</To>    </Translation><Translation>     <From>indiana</From>     <To>"indiana"[MeSH Terms] OR "indiana"[All Fields] OR "indiana's"[All Fields]</To>    </Translation></TranslationSet><QueryTranslation>hardy rw[Author] AND ("indiana"[MeSH Terms] OR "indiana"[All Fields] OR "indiana s"[All Fields])</QueryTranslation></eSearchResult>

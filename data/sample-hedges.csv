@@ -1,0 +1,5 @@
+BiasDimension,Description,TeamMembers,SearchStrategy
+Racial,Racial/Ethnic Minorities,Erica,Racial OR Ethnic OR Minorities
+Geographic,Geographic bias (US vs Non-US),"Joanne, Cheryl, Dorothy",Geographic Bias
+Women,Women/Sex,Cheryl,Women OR (Women AND Sex)
+Gender,Gender/Transgender/Sexual Minorities,"Cheryl, Dorothy",Gender OR Transgender OR (Sexual AND Minorities)

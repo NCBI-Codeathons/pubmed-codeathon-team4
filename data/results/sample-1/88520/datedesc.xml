@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE eSearchResult PUBLIC "-//NLM//DTD esearch 20060628//EN" "https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd">
+<eSearchResult><Count>15</Count><RetMax>15</RetMax><RetStart>0</RetStart><IdList>
+<Id>35572990</Id>
+<Id>35491933</Id>
+<Id>35313709</Id>
+<Id>34987636</Id>
+<Id>34686338</Id>
+<Id>34528509</Id>
+<Id>34446844</Id>
+<Id>34338040</Id>
+<Id>33460497</Id>
+<Id>32979244</Id>
+<Id>32747560</Id>
+<Id>32451485</Id>
+<Id>32151973</Id>
+<Id>31804798</Id>
+<Id>28654087</Id>
+</IdList><TranslationSet><Translation>     <From>zhang guo</From>     <To>Zhang, Guo[Full Author Name] OR Guo, Zhang[Full Author Name] OR zhang guo[Author] OR zhang guo[Investigator]</To>    </Translation><Translation>     <From>fibrosis</From>     <To>"fibrosi"[All Fields] OR "fibrosing"[All Fields] OR "fibrosis"[MeSH Terms] OR "fibrosis"[All Fields] OR "fibrose"[All Fields] OR "fibroses"[All Fields]</To>    </Translation><Translation>     <From>hemangioma</From>     <To>"haemangioendothelioma"[All Fields] OR "hemangioendothelioma"[MeSH Terms] OR "hemangioendothelioma"[All Fields] OR "haemangioendotheliomas"[All Fields] OR "haemangioma"[All Fields] OR "hemangioma"[MeSH Terms] OR "hemangioma"[All Fields] OR "haemangiomas"[All Fields] OR "hemangiomas"[All Fields] OR "hemangioendotheliomas"[All Fields]</To>    </Translation><Translation>     <From>gastric</From>     <To>"gastrics"[All Fields] OR "stomach"[MeSH Terms] OR "stomach"[All Fields] OR "gastric"[All Fields]</To>    </Translation><Translation>     <From>chips</From>     <To>"chipped"[All Fields] OR "chipping"[All Fields] OR "chippings"[All Fields] OR "chips"[All Fields]</To>    </Translation></TranslationSet><QueryTranslation>(((((((((zhang, guo[Author] OR guo, zhang[Author]) OR zhang guo[Author] OR zhang guo[Investigator]) AND "huazhong"[All Fields]) NOT "klionsky"[All Fields]) NOT ("fibrosi"[All Fields] OR "fibrosing"[All Fields] OR "fibrosis"[MeSH Terms] OR "fibrosis"[All Fields] OR "fibrose"[All Fields] OR "fibroses"[All Fields])) NOT ("haemangioendothelioma"[All Fields] OR "hemangioendothelioma"[MeSH Terms] OR "hemangioendothelioma"[All Fields] OR "haemangioendotheliomas"[All Fields] OR "haemangioma"[All Fields] OR "hemangioma"[MeSH Terms] OR "hemangioma"[All Fields] OR "haemangiomas"[All Fields] OR "hemangiomas"[All Fields] OR "hemangioendotheliomas"[All Fields])) NOT "endometrial"[All Fields]) NOT ("gastrics"[All Fields] OR "stomach"[MeSH Terms] OR "stomach"[All Fields] OR "gastric"[All Fields])) NOT "chess"[All Fields]) NOT ("chipped"[All Fields] OR "chipping"[All Fields] OR "chippings"[All Fields] OR "chips"[All Fields])</QueryTranslation><WarningList><PhraseIgnored>and</PhraseIgnored></WarningList></eSearchResult>

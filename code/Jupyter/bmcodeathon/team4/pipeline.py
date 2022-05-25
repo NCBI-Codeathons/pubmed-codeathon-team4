@@ -97,15 +97,13 @@ class Pipeline:
             result_path = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
         result_path = Path(self.config.result_path) / result_path
         result_path.mkdir()
-        sample_path = result_path / 'sample_queries.csv'
-        queries.to_csv(sample_path, index=False)
 
         # start the result file
         output_path = result_path / 'results.csv'
         f = open(output_path, 'w')
         writer = csv.writer(f, dialect='unix')
         writer.writerow([
-            'search_id',
+            'search_index',
             'sort',
             'result_count',
             'return_count',
@@ -124,7 +122,7 @@ class Pipeline:
             query_term = row['query_term']
 
             # that query gets a directory
-            query_result_path = result_path / search_index
+            query_result_path = result_path / str(search_index)
             query_result_path.mkdir()
             relevance_results = query_result_path / 'relevance.xml'
             datedesc_results = query_result_path / 'datedesc.xml'
@@ -149,7 +147,7 @@ class Pipeline:
                 r = eutils.esearch('pubmed', term=full_query, retmax=200)
                 bias_result_count = len(r.xml.xpath('//IdList/Id'))
                 writer.writerow([
-                    search_id,
+                    search_index,
                     'relevance',
                     result_count,
                     return_count,
@@ -177,7 +175,7 @@ class Pipeline:
                 r = eutils.esearch('pubmed', term=full_query, retmax=200)
                 bias_result_count = len(r.xml.xpath('//IdList/Id'))
                 writer.writerow([
-                    search_id,
+                    search_index,
                     'date_desc',
                     result_count,
                     return_count,
