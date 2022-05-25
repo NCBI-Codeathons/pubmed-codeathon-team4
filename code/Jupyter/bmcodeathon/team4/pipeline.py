@@ -18,11 +18,11 @@ class Config:
                  rate_limit: int,
                  num_queries: int,
                  num_results: int,
-                 data_path : str,
-                 data_sep : str,
-                 result_path : str,
-                 hedge_path : str,
-                 seed : int):
+                 data_path: str,
+                 data_sep: str,
+                 result_path: str,
+                 hedge_path: str,
+                 seed: int):
         self.api_key = api_key
         self.email = email
         self.rate_limit = rate_limit
@@ -36,7 +36,7 @@ class Config:
 
     @property
     def random_state(self):
-        return RandomState(self.seed) if self.seed else None
+        return RandomState(self.seed) if self.seed > 0 else None
 
     @staticmethod
     def get_defaults():
@@ -48,6 +48,7 @@ class Config:
             'data_sep': '\t',
             'result_path': '/data/team4/results',
             'hedge_path': '/data/team4/hedges.csv',
+            # TODO: replace these with None, and make it work
             'api_key': '8d4c4f67f2a663e9d0ef6ed4d60a4eedd609',
             'email': 'dansmood@gmail.com',
             'rate_limit': 10
