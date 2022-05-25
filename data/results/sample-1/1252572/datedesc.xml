@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE eSearchResult PUBLIC "-//NLM//DTD esearch 20060628//EN" "https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd">
+<eSearchResult><Count>4</Count><RetMax>4</RetMax><RetStart>0</RetStart><IdList>
+<Id>20156407</Id>
+<Id>12474517</Id>
+<Id>6646729</Id>
+<Id>872786</Id>
+</IdList><TranslationSet/><QueryTranslation>"perikardium"[All Fields]</QueryTranslation></eSearchResult>

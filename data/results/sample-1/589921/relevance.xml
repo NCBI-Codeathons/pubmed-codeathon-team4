@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE eSearchResult PUBLIC "-//NLM//DTD esearch 20060628//EN" "https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd">
+<eSearchResult><Count>17</Count><RetMax>17</RetMax><RetStart>0</RetStart><IdList>
+<Id>25759759</Id>
+<Id>31731892</Id>
+<Id>28862230</Id>
+<Id>18317442</Id>
+<Id>23087881</Id>
+<Id>16584664</Id>
+<Id>25269037</Id>
+<Id>24071055</Id>
+<Id>1947311</Id>
+<Id>15096000</Id>
+<Id>32547497</Id>
+<Id>20423690</Id>
+<Id>27521731</Id>
+<Id>23565408</Id>
+<Id>26238133</Id>
+<Id>21170364</Id>
+<Id>12541106</Id>
+</IdList><TranslationSet><Translation>     <From>pituitary</From>     <To>"pituitaries"[All Fields] OR "pituitary gland"[MeSH Terms] OR ("pituitary"[All Fields] AND "gland"[All Fields]) OR "pituitary gland"[All Fields] OR "pituitary"[All Fields] OR "pituitary's"[All Fields]</To>    </Translation><Translation>     <From>macroadenoma</From>     <To>"macroadenoma"[All Fields] OR "macroadenomas"[All Fields]</To>    </Translation></TranslationSet><QueryTranslation>("pituitaries"[All Fields] OR "pituitary gland"[MeSH Terms] OR ("pituitary"[All Fields] AND "gland"[All Fields]) OR "pituitary gland"[All Fields] OR "pituitary"[All Fields] OR "pituitary s"[All Fields]) AND ("macroadenoma"[All Fields] OR "macroadenomas"[All Fields]) AND "granulomatous"[All Fields]</QueryTranslation></eSearchResult>

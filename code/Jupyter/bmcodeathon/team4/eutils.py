@@ -50,7 +50,7 @@ class EUtils(object):
             r.xml = etree.parse(BytesIO(r.content))
         return r
 
-    def esearch(self, db, history=True, webenv=None, query_key=None, retmax=20, **kwargs):
+    def esearch(self, db, history=False, webenv=None, query_key=None, retmax=20, **kwargs):
         if history or webenv:
             kwargs['usehistory'] = 'y'
             if webenv:

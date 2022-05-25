@@ -97,15 +97,13 @@ class Pipeline:
             result_path = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
         result_path = Path(self.config.result_path) / result_path
         result_path.mkdir()
-        sample_path = result_path / 'sample_queries.csv'
-        queries.to_csv(sample_path, index=False)
 
         # start the result file
         output_path = result_path / 'results.csv'
         f = open(output_path, 'w')
         writer = csv.writer(f, dialect='unix')
         writer.writerow([
-            'search_id',
+            'search_index',
             'sort',
             'result_count',
             'return_count',
@@ -119,12 +117,12 @@ class Pipeline:
 
         # for each query
         eutils = self.eutils
-        for _, row in self.queries.iterrows():
+        for search_index, row in self.queries.iterrows():
             search_id = row['search_id']
             query_term = row['query_term']
 
             # that query gets a directory
-            query_result_path = result_path / search_id
+            query_result_path = result_path / str(search_index)
             query_result_path.mkdir()
             relevance_results = query_result_path / 'relevance.xml'
             datedesc_results = query_result_path / 'datedesc.xml'
@@ -136,18 +134,20 @@ class Pipeline:
             result_count = int(r.xml.xpath('//Count')[0].text)
             return_count = len(pmids)
 
-            # post to history server
-            r = eutils.epost('pubmed', *pmids)
-            webenv = r.webenv
-            query_key = r.query_key
+            # # post to history servers
+            # r = eutils.epost('pubmed', *pmids)
+            # webenv = r.webenv
+            # query_key = r.query_key
 
             # for each hedge, run the query against that query_id
             for hedge_name, hedge_row in self.hedge.iterrows():
                 hedge_query = hedge_row['SearchStrategy']
-                r = eutils.esearch('pubmed', term=hedge_query, webenv=webenv, query_key=query_key, retmax=200)
+                pmid_term = ','.join(pmids) + '[UID]'
+                full_query = f'{pmid_term} AND ({hedge_query})'
+                r = eutils.esearch('pubmed', term=full_query, retmax=200)
                 bias_result_count = len(r.xml.xpath('//IdList/Id'))
                 writer.writerow([
-                    search_id,
+                    search_index,
                     'relevance',
                     result_count,
                     return_count,
@@ -162,19 +162,21 @@ class Pipeline:
             result_count = int(r.xml.xpath('//Count')[0].text)
             return_count = len(pmids)
 
-            # post to history server
-            r = eutils.epost('pubmed', *pmids)
-            webenv = r.webenv
-            query_key = r.query_key
+            # # post to history server
+            # r = eutils.epost('pubmed', *pmids)
+            # webenv = r.webenv
+            # query_key = r.query_key
 
             # for each hedge, run the query against that query_id
             for hedge_name, hedge_row in self.hedge.iterrows():
                 hedge_query = hedge_row['SearchStrategy']
-                r = eutils.esearch('pubmed', term=hedge_query, webenv=webenv, query_key=query_key, retmax=200)
+                pmid_term = ','.join(pmids) + '[UID]'
+                full_query = f'{pmid_term} AND ({hedge_query})'
+                r = eutils.esearch('pubmed', term=full_query, retmax=200)
                 bias_result_count = len(r.xml.xpath('//IdList/Id'))
                 writer.writerow([
-                    search_id,
-                    'relevance',
+                    search_index,
+                    'date_desc',
                     result_count,
                     return_count,
                     hedge_name,

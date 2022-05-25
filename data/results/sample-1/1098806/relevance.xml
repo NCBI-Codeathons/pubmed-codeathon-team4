@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE eSearchResult PUBLIC "-//NLM//DTD esearch 20060628//EN" "https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd">
+<eSearchResult><Count>24</Count><RetMax>24</RetMax><RetStart>0</RetStart><IdList>
+<Id>32623722</Id>
+<Id>23106656</Id>
+<Id>29545098</Id>
+<Id>23307410</Id>
+<Id>27862383</Id>
+<Id>25433094</Id>
+<Id>28495306</Id>
+<Id>22018692</Id>
+<Id>22964785</Id>
+<Id>27165447</Id>
+<Id>21440544</Id>
+<Id>19900985</Id>
+<Id>16221709</Id>
+<Id>15265583</Id>
+<Id>15910759</Id>
+<Id>15652992</Id>
+<Id>25238695</Id>
+<Id>18260794</Id>
+<Id>18787335</Id>
+<Id>15342264</Id>
+<Id>18000228</Id>
+<Id>10082854</Id>
+<Id>11379822</Id>
+<Id>19112389</Id>
+</IdList><TranslationSet><Translation>     <From>spandou e</From>     <To>spandou e[Author]</To>    </Translation></TranslationSet><QueryTranslation>spandou e[Author]</QueryTranslation></eSearchResult>

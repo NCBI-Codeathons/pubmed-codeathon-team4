@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE eSearchResult PUBLIC "-//NLM//DTD esearch 20060628//EN" "https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd">
+<eSearchResult><Count>2</Count><RetMax>2</RetMax><RetStart>0</RetStart><IdList>
+<Id>29641744</Id>
+<Id>10355333</Id>
+</IdList><TranslationSet><Translation>     <From>crime</From>     <To>"crime"[MeSH Terms] OR "crime"[All Fields] OR "crimes"[All Fields] OR "crime's"[All Fields]</To>    </Translation><Translation>     <From>en</From>     <To>"enzymology"[Subheading] OR "enzymology"[All Fields] OR "en"[All Fields]</To>    </Translation><Translation>     <From>ecuador</From>     <To>"ecuador"[MeSH Terms] OR "ecuador"[All Fields] OR "ecuador's"[All Fields]</To>    </Translation></TranslationSet><QueryTranslation>("crime"[MeSH Terms] OR "crime"[All Fields] OR "crimes"[All Fields] OR "crime s"[All Fields]) AND ("enzymology"[MeSH Subheading] OR "enzymology"[All Fields] OR "en"[All Fields]) AND "el"[All Fields] AND ("ecuador"[MeSH Terms] OR "ecuador"[All Fields] OR "ecuador s"[All Fields])</QueryTranslation></eSearchResult>
