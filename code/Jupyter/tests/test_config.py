@@ -39,7 +39,6 @@ def test_unknown_setting_error(tmp_path):
     with pytest.raises(ValueError):
         Config.load(path)
 
-#
 # Python's typing doesn't enforce type hints - moving on
 #
 # def test_invalid_type_error(tmp_path):

@@ -25,6 +25,7 @@ class EUtils(object):
         self.email = email
         self.rate = rate
         self.prefix = prefix if prefix else EUTILS_PREFIX
+        self.call_count = 0
         if not session:
             session = RateLimitedSession(rate=rate, tokens=rate, capacity=rate)
             session.mount('https://', HTTPAdapter(max_retries=3, pool_maxsize=10))
@@ -42,6 +43,7 @@ class EUtils(object):
         params = self.params(db, retmode='xml', **kwargs)
         url = EUTILS_URL.format(self.prefix, 'einfo.fcgi') + '?' + params
         r = self.session.get(url)
+        self.call_count += 1
         r.raise_for_status()
         content_type = r.headers['Content-Type']
         if content_type.startswith('text/xml'):
@@ -58,6 +60,7 @@ class EUtils(object):
         params = self.params(db, retmode='xml', retmax=str(retmax), **kwargs)
         url = EUTILS_URL.format(self.prefix, 'esearch.fcgi') + '?' + params
         r = self.session.get(url)
+        self.call_count += 1
         r.raise_for_status()
         content_type = r.headers['Content-Type']
         if content_type.startswith('text/xml'):
@@ -81,6 +84,7 @@ class EUtils(object):
             params = self.params(db, retmode='xml', retmax=str(retmax), **kwargs)
         url = EUTILS_URL.format(self.prefix, 'efetch.fcgi') + '?' + params
         r = self.session.get(url)
+        self.call_count += 1
         r.raise_for_status()
         content_type = r.headers['Content-Type']
         if content_type.startswith('text/xml'):
@@ -94,6 +98,7 @@ class EUtils(object):
         params = self.params(db, id=idlist, retmode='xml', **kwargs)
         url = EUTILS_URL.format(self.prefix, 'epost.fcgi') + '?' + params
         r = self.session.get(url)
+        self.call_count += 1
         r.raise_for_status()
         content_type = r.headers['Content-Type']
         if content_type.startswith('text/xml'):
