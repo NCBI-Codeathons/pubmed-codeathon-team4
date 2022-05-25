@@ -88,7 +88,7 @@ class Pipeline:
         queries = self.data.sample(num_queries, random_state=self.config.random_state)
         # drop some of the columns to make this tractable
         columns_to_drop = list(set(queries.columns) - {'search_id', 'query_term', 'result_count'})
-        queries = queries.drop(columns=columns_to_drop)
+        self.queries = queries = queries.drop(columns=columns_to_drop)
 
         # setup the result directory
         if result_path is None:
@@ -111,12 +111,12 @@ class Pipeline:
             datedesc_results = query_result_path / 'datedesc.xml'
 
             # save the query results with relevance
-            r = eutils.esearch('pumed', retmax=self.config.num_results, term=query_term, sort='relevance')
-            relevance_results.write_text(r.content)
+            r = eutils.esearch('pubmed', retmax=self.config.num_results, term=query_term, sort='relevance')
+            relevance_results.write_bytes(r.content)
 
             # save the query results with date descending
             r = eutils.esearch('pubmed', retmax=self.config.num_results, term=query_term, sort='date_desc')
-            datedesc_results.write_text(r.content)
+            datedesc_results.write_bytes(r.content)
 
             progress.next()
         progress.finish()
