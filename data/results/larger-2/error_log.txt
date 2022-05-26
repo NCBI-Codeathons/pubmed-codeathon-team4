@@ -1,0 +1,11 @@
+915992, relevance:
+Search Backend failed: GWSearch response processing error: null"
+}
+915992, date_desc:
+Search Backend failed: GWSearch response processing error: null"
+}
+490136, date_desc: exception: ("Connection broken: InvalidChunkLength(got length b'', 0 bytes read)", InvalidChunkLength(got length b'', 0 bytes read))
+1194436, relevance: exception: 500 Server Error: Internal Server Error for url: https://eutilspreview.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?retmode=xml&retmax=200&term=%28rescue%20icsi%29%20AND%20medline%5Bsb%5D&sort=relevance&db=pubmed&api_key=f069cf776feaa627ab9b1e0fc2b090610708
+490136, relevance: exception: ("Connection broken: InvalidChunkLength(got length b'', 0 bytes read)", InvalidChunkLength(got length b'', 0 bytes read))
+130572, relevance, race:
+Search Backend failed: Pubmed 2.0 search API: HTTP request returned 502 status.

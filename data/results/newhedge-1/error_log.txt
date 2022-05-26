@@ -1,0 +1,4 @@
+7686, relevance, sexual_minorities:
+Search Backend failed: XML Exception at /pubmed_gen/rbuild/version/20220418/entrez/2.16.1/src/internal/txxmldoc/XmlDocument.cpp(1449): code=6, XML: Parse failed
+459480, relevance, non_us:
+Search Backend failed: Pubmed 2.0 search API: HTTP request returned 502 status.

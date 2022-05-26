@@ -1,0 +1,8 @@
+139653, date_desc, kids:
+Search Backend failed: Pubmed 2.0 search API: HTTP request returned 502 status.
+776507, date_desc, women:
+Search Backend failed: Pubmed 2.0 search API: HTTP request returned 502 status.
+691374, date_desc, women:
+Search Backend failed: Pubmed 2.0 search API: HTTP request returned 502 status.
+689589, relevance, elderly:
+Search Backend failed: Pubmed 2.0 search API: HTTP request returned 502 status.
