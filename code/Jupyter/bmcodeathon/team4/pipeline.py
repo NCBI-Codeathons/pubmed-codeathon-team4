@@ -93,8 +93,10 @@ class Pipeline:
         if data_path is None:
             data_path = self.config.data_path
         df = pd.read_csv(data_path, sep=self.config.data_sep)
-        # remove rows without query
+        # remove rows without query_term
         df = df[df.query_term.notnull()]
+        # keep only one copy of each query_term
+        df = df.drop_duplicates(subset=['query_term'])
         return df
 
     def setup(self):
