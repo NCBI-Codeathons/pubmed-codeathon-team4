@@ -1,0 +1,10 @@
+1121232, relevance:
+Search Backend failed: Pubmed 2.0 search API: HTTP request returned 502 status.
+1260666, relevance:
+Search Backend failed: GWSearch response processing error: null"
+}
+1260666, date_desc:
+Search Backend failed: GWSearch response processing error: null"
+}
+814134, date_desc, sexual_minorities:
+Search Backend failed: Pubmed 2.0 search API: HTTP request returned 502 status.
