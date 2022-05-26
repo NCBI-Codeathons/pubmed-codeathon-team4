@@ -6,12 +6,11 @@ from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 import argparse
 import csv
-import datetime
+from datetime import datetime
 import time
 #import calendar
 alltests = []
-ahora = datetime.date.today()
-
+now = datetime.now()
 
 parser = argparse.ArgumentParser(description='''Given a CSV file of test searches, this application retrieves counts for
         the top N of (indexed) Best Match and Date Sorted items when searched against several hedges relating to potentially biased-against groups.
@@ -85,7 +84,7 @@ with open(args.searchtermsfile, newline='') as csvfile:
         alltests.append(myTest)
 
 #This assumes that the search terms input file ends with '.csv'
-myoutputfilestr = "simpleoutput_" + args.searchtermsfile[:-4] + "_" + ahora.strftime("%Y%m%d_%H_%M_%S") + ".csv"
+myoutputfilestr = "simpleoutput_" + args.searchtermsfile[:-4] + "_" + now.strftime("%Y_%m_%d") + ".csv"
 with open(myoutputfilestr, 'w', newline='') as csvfile:
     fieldnames = []
     for key in alltests[0].keys():
