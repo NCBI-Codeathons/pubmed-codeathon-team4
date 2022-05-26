@@ -1,5 +1,4 @@
 import csv
-import sys
 import time
 from datetime import datetime
 from pathlib import Path
@@ -67,6 +66,7 @@ class Config:
 class ResultAtom:
     result_count: int
     return_count: int
+    error_count: int
     bias_counts: List[Tuple]
 
 
@@ -79,6 +79,8 @@ class Pipeline:
         if experiment is None:
             experiment = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
         self.result_path = Path(self.config.result_path) / experiment
+        self.error_count = 0
+        self.error_log = None
         self.eutils = EUtils(config.api_key, config.email, config.rate_limit, PREVIEW_PREFIX)
 
     def load_hedges(self, hedge_path: Optional[str] = None):
@@ -108,6 +110,7 @@ class Pipeline:
 
         # setup the result directoryh
         self.result_path.mkdir()
+        self.error_log = (self.result_path / 'error_log.txt').open('w')
         queries_path = self.result_path / 'queries.csv'
         queries.to_csv(queries_path)
 
@@ -125,6 +128,7 @@ class Pipeline:
     #      - list of hedge and bias_result_count tuples
     def run_case(self, search_index, sort_order):
         query_term = self.queries.query_term[search_index]
+        local_error_count = 0
 
         # that query gets a directory
         query_result_path = self.result_path / str(search_index)
@@ -135,9 +139,15 @@ class Pipeline:
         only_medline = f'({query_term}) AND medline[sb]'
         r = self.eutils.esearch('pubmed', retmax=self.config.num_results, term=only_medline, sort=sort_order)
         xml_results.write_bytes(r.content)
+        error_elements = r.xml.xpath('/eSearchResult/ERROR')
+        for error in error_elements:
+            self.error_count += 1
+            local_error_count += 1
+            print(f'{search_index}, {sort_order}:\n{error.text}', file=self.error_log)
         pmids = [element.text for element in r.xml.xpath('//IdList/Id')]
         pmid_term = ','.join(pmids) + '[UID]'
-        result_count = int(r.xml.xpath('//Count')[0].text)
+        counts = r.xml.xpath('//Count')
+        result_count = int(counts[0].text) if len(counts) > 0 else 0
         return_count = len(pmids)
 
         bias_counts = []
@@ -146,10 +156,15 @@ class Pipeline:
             hedge_query = hedge_row['Hedge_text']
             full_query = f'{pmid_term} AND ({hedge_query})'
             r = self.eutils.esearch('pubmed', term=full_query, retmax=200)
+            error_elements = r.xml.xpath('/eSearchResult/ERROR')
+            for error in error_elements:
+                self.error_count += 1
+                local_error_count += 1
+                print(f'{search_index}, {sort_order}, {hedge_name}:\n{error.text}', file=self.error_log)
             bias_result_count = len(r.xml.xpath('//IdList/Id'))
             bias_counts.append((hedge_name, bias_result_count))
 
-        return ResultAtom(result_count, return_count, bias_counts)
+        return ResultAtom(result_count, return_count, local_error_count, bias_counts)
 
     def run(self):
         # start the result file
@@ -161,6 +176,7 @@ class Pipeline:
             'sort',
             'result_count',
             'return_count',
+            'error_count',
             'bias_dimension',
             'bias_result_count',
         ])
@@ -187,17 +203,20 @@ class Pipeline:
                             sort_order,
                             atom.result_count,
                             atom.return_count,
+                            atom.error_count,
                             hedge_name,
                             bias_result_count
                         ])
                 except Exception as exc:
-                    print(f'{search_index}, {sort_order}: exception: {exc}', file=sys.stderr)
+                    self.error_count += 1
+                    print(f'{search_index}, {sort_order}: exception: {exc}', file=self.error_log)
         progress.finish()
         f.close()
         elapsed = time.perf_counter() - stime
         call_count = self.eutils.call_count
         tput = call_count / elapsed
         print(f'{call_count} API Calls in {elapsed:.2f} seconds ({tput:.1f} per second)')
+        print(f'There were {self.error_count} errors')
         print(f'Results in {output_path}')
 
         return 0
