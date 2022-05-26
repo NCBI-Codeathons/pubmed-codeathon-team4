@@ -38,7 +38,7 @@ class Config:
         return {
             'num_queries': 1000,
             'num_results': 200,
-            'seed': -1,                             # seed below 0 is ignored
+            'seed': int(time.time()),               # default seed is random
             'data_path': '/data/pubmed-data.tsv',
             'data_sep': '\t',
             'result_path': '/data/team4/results',
@@ -115,6 +115,8 @@ class Pipeline:
         self.error_log = (self.result_path / 'error_log.txt').open('w')
         queries_path = self.result_path / 'queries.csv'
         queries.to_csv(queries_path)
+        seed_path = self.result_path / 'seed.txt'
+        seed_path.write_text(str(self.config.seed))
 
     # input to the thread pool jobs
     #  - the search_index and sort they are running
