@@ -1,0 +1,10 @@
+1221275, date_desc, elderly:
+Search Backend failed: Pubmed 2.0 search API: HTTP request returned 502 status.
+242868, date_desc:
+Search Backend failed: GWSearch response processing error: null"
+}
+242868, relevance:
+Search Backend failed: GWSearch response processing error: null"
+}
+877045, date_desc, sexual_minorities:
+Search Backend failed: Pubmed 2.0 search API: HTTP request returned 502 status.
